@@ -11,7 +11,7 @@ Switzerland is divided into 26 states called "Cantons". Zurich is the most popul
 
 The aim of this project is to predict weather the two left-wing parties will reach a voters share above a ceratin threshold (e.g. 33%) within a municipality during an election or not based on factors such as population density, share of foreigners, median income, religion and further factors. 
 
-<img src="zurich_sp_1995.png" width="500" height="700">
+<img src="zurich_sp_1995.png" width="650" height="700">
 
 ## 2 Data description
 All relevant data can be retrieved from https://opendata.swiss/de/. If possible, the goal is to implement an API such that data can be retrieved automatically. 
