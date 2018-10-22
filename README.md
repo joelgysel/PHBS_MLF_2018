@@ -14,7 +14,7 @@ The aim of this project is to predict weather the two left-wing parties will rea
 <img src="zurich_sp_1995.png" width="650" height="700">
 
 ## 2 Data description
-All relevant data can be retrieved from https://opendata.swiss/de/. If possible, the goal is to implement an API such that data can be retrieved automatically. 
+All relevant data can be retrieved from https://opendata.swiss/de/. The data series starts in 1995 and cover six elections. If possible, the goal is to implement an API such that data can be retrieved automatically. 
 
 ## 3 Methodology 
 After importing and preparing the data, different selection mechanisms will be applied to test which factors should be used for the prediction and to reduce the dimensionalty of the data frame. 
