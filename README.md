@@ -7,9 +7,9 @@ Predict the outcome of elections in the Swiss Canton of Zurich
 Joel Gysel, 221802010272
 
 ## 1 Introduction 
-Switzerland is divided into 26 states called "Cantons". Zurich is the most populous canton of Switzerland and it consists of 166 municipalities. Every four years, elections take place in Zurich. In Switzerland there are typically two left-wing parties and three centrist or right-wing parties. 
+Switzerland is divided into 26 states called "Cantons". Zurich is the most populous canton of Switzerland and it consists of 166 municipalities. Every four years, elections take place in Zurich. In Switzerland there are typically two or three left-wing parties and three centrist or right-wing parties. 
 
-The aim of this project is to predict weather the two left-wing parties will reach a voters share above a ceratin threshold (e.g. 33%) within a municipality during an election or not based on factors such as population density, share of foreigners, median income, religion and further factors. 
+The aim of this project is first to predict the share of votes that the three left-wing parties combined in Zurich will reach in the next election and second to define a threshold and assess the effectiveness of machine learning classifiers in predicting wheather the left-wing parties will reach a voteshare above this threshold or not. 
 
 <img src="zurich_sp_1995.png" width="650" height="700">
 
@@ -30,36 +30,52 @@ foreigners	| Share of foreign people compared to whole population
 population_density	| Population density within a district
 voteshare_past | Share of votes of left-wing parties in last election
 
-The following explanatory variables will or can be added: 
 
-Feature |Description
--------|---------
-national_trend	| National trends in voteshare prior to the Zurich election 
-median_income	| Median income
+Not included in the data frame but still a very important variable is the variable lucerne. As you can see in the graph below, the outcome of the Zurich election follows usually the trend of elections prior to the Zurich election. The canton of Lucerne has its election just a few month before the Zurich election takes place and if the left-wing parties are losing votes in Lucerne, it is very likely that the same will happen in the Zurich elections. By including the percentage changes in voteshare from Lucerne, we aim to further improve our model. 
 
-
-## 3 Methodology
-### The problem 
-Explanatory variables are weak except for voteshare_past and national_trend. 
 
 <img src="kantonale wahlen.png" width="550" height="300">
 
-### The idea 
-1. Standardize the data by deducting the mean voteshare in each year 
-2. Apply machine learning methods to demeaned data 
-3. Add the mean to the data again to get a prediction for the actual voteshare 
 
-## 4 Standardize the data 
-### Data before deduction of mean 
-<img src="voteshares.png" width="400" height="350">
+
+## 3 Predict continuous output variable 
+### Regression
+#### Regression with absolute values
+Before we start running regressions with multiple explanatory, we want to run a very sparse model with just one explanatory variable: The outcome of the last election. This sparse model will further be called "univariate". This simple model helps to demonstrate the problem with absolute values. 
+
+<img src="r2 absolute values.png" width="550" height="300">
+
+The graph above is used to evaluate the performance of this simple regression and of all future models. The y-axis shows the R^2 in case of a regression or the score in case of a classification. The x-axis shows, what we evaluate. The 2003 data point will always be the performance of the model within the train-dataset (2003). The years 2007 to 2015 represent a cross-validation with either fitting on just the precedent election or fitting based on all precedent elections. 
+
+Let us first have a look at the blue line: Here we fit the outcome of the 2003 election to the outcome of the 1999 election and use the coefficients to make an out-of-sample prediction for the 2007 election (same mechanism for the following years). This model performs very poorly with even a negative R^2 in 2007. Due to the very poor performance, I was tempted to test a second model: I fitted the 2003 outcome on the 2003 outcome such that I had a model with an intercept of zero and and a beta coefficient of 1 (this model will be called zero/one). Testing this model in a forecast basically means to use the outcome of the last elections as the prediction for the next election. This model, even though performing a bit better, still performs very bad, so past elections do not seem to contain a lot of information about future elections (similar as financial data). 
+
+#### Regression with relative values
+To improve my model, I now start working with relative values. The idea: if I transform my data, models will likely perform much better. I can apply regressions and classifiers to relative data and then transform the data back to absolute values such that I get a better forecast of the outcome of elections. 
+
+If I would transform the data s.t. it follows standard normal distribution, I would have problems transforming the data back since I have no information about the variance. However, if I only deduct the mean from "voteshare", I can apply regressions and classifiers to relative data and then add the mean and the percentage change from the election of Lucerne to the predicted values in order to get back to absolute values (and hopefully better absolute values). 
+
+However, if I only deduct the mean from the data, I have to make sure that the variance is comparable in each election year, otherwise my models will be missleading. To test the null-hypothesis of equal variance, I apply the fligner-killeen test to the voteshare of my four election years: 
 
 fligner-killeen test|-
 --------------------|---------
 test statistic      | 2.067
 P-value	            | 0.5585
 
-### Data after deduction of mean 
+Luckily, we get a p-value of over 0.55 which means that we cannot reject the null-hypothesis of equal variance in the election years. Given this result, I am now deducting the mean within each election year. The two histogramms below show the data before and after the transformation: 
+
+<img src="voteshares.png" width="400" height="350">
 <img src="voteshares demeaned.png" width="400" height="350">
+
+Now I run the same regressions again as before, but this time I use relative values: 
+
+<img src="r2 relative values.png" width="550" height="300">
+
+The accuracy of my model is much better now. This means: If I can predict the change in mean by making use of election data from the canton of Lucerne, it should be possible to improve my model. A second observation of the above graph is that the zero/one model is still performing better than a fitted model. Next, I will try to improve the fitted model by making the fit not just based on the last election but on all last elections, which means that my dataset for fitting is growing over time (in 2003 (train accuracy) and 2007 (first out-of-sample-prediction), this approach will lead to the same results as the fitted model before since the dataset only starts to be bigger from 2011 onward). 
+
+<img src="r2 relative values sigma.png" width="550" height="300">
+
+We can see that this fitted model performs better than before but still worse than the zero/one model. 
+
 
 ## 5 Apply ML method to continuous output variable 
 ### Linear Regression 
@@ -82,7 +98,11 @@ On of two methods described in the book to predict a continuous outcome.
 
 As it can be seen from the graph, the decision tree regression is not optimal in this case since the demeaned outcome of the last and this election is almost perfectly linear. 
 
+
 ## 5 Apply ML method to discrete output variable 
+As stated in the introduction, we will now assess the effectiveness of classifiers for a voteshare threshold. Threshold classifications for predicting the outcome of elections can be important if for example we want to predict if a party will reach a majority in a ceratin area (e.g. president elections in the U.S.) or if there is a minimum voteshare that a party must reach in order to receive seats in the parlament. In Zurich none of those two examples is especially relevant, therefore we define the threshold just as the median party strength of the left-wing parties. By defining the threshold this way, we do not have to be afraid of an imbalanced data set.   
+
+
 ### Logistic regression 
 <img src="decision boundaries log reg.png" width="400" height="300">
 
