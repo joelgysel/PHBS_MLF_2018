@@ -11,10 +11,10 @@ Switzerland is divided into 26 states called "Cantons". Zurich is the most popul
 
 The aim of this project is first to predict the share of votes that the three left-wing parties combined in Zurich will reach in the next election and second to define a threshold and assess the effectiveness of machine learning classifiers in predicting wheather the left-wing parties will reach a voteshare above this threshold or not. 
 
-<img src="zurich_sp_1995.png" width="650" height="700">
+<img src="images/zurich_sp_1995.png" width="650" height="700">
 
 ## 2 Data description
-All relevant data can be retrieved from https://opendata.swiss/de/. The election data starts in 1995 and covers six elections. However, most explanatory variables are only available for the elections 2003, 2007, 2011 and 2015, therefore we focuse our analysis on those four elections.
+All relevant data can be retrieved from https://opendata.swiss/de/. The election data starts in 1995 and covers six elections. However, most explanatory variables are only available for the elections 2003, 2007, 2011 and 2015, therefore I focuse my analysis on those four elections.
 
 The explained variable is voteshare, which consists of the combined party strength (share of votes) of the three parties "Sozialdemokratische Partei (SP)", "Grüne Partei (GP)" and "Alternative Liste (AL)". Those three parties are forming the left wing in the Kanton of Zurich. 
 
@@ -35,7 +35,7 @@ population_density	| Population density within a district
 voteshare_past | Share of votes of left-wing parties in last election
 
 
-Not included in the data frame but still a very important variable is the variable lucerne. As you can see in the graph below, the outcome of the Zurich election follows usually the trend of elections prior to the Zurich election. The canton of Lucerne has its election just a few month before the Zurich election takes place and if the left-wing parties are losing votes in Lucerne, it is very likely that the same will happen in the Zurich elections. By including the percentage changes in voteshare from Lucerne, we aim to further improve our model. 
+Not included in the data frame but still a very important variable is the variable lucerne. As we can see in the graph below, the outcome of the Zurich election follows usually the trend of elections prior to the Zurich election. The canton of Lucerne has its election just a few month before the Zurich election takes place and if the left-wing parties are losing votes in Lucerne, it is very likely that the same will happen in the Zurich elections. By including the percentage changes in voteshare from Lucerne, I aim to further improve our model. 
 
 
 <img src="images/kantonale wahlen.png" width="550" height="300">
@@ -45,13 +45,13 @@ Not included in the data frame but still a very important variable is the variab
 ## 3 Predict continuous output variable 
 ### Regression
 #### Regression with absolute values
-Before we start running regressions with multiple explanatory, we want to run a very sparse model with just one explanatory variable: The outcome of the last election. This sparse model will further be called "univariate". This simple model helps to demonstrate the problem with absolute values. 
+Before I start running regressions with multiple explanatory, I want to run a very sparse model with just one explanatory variable: The outcome of the last election. This sparse model will further be called "univariate". This simple model helps to demonstrate the problem with absolute values. 
 
 <img src="images/r2 absolute values.png" width="450" height="300">
 
-The graph above is used to evaluate the performance of this simple regression and of all future models. The y-axis shows the R^2 in case of a regression or the score in case of a classification. The x-axis shows, what we evaluate. The 2003 data point will always be the performance of the model within the train-dataset (2003). The years 2007 to 2015 represent a cross-validation with either fitting on just the precedent election or fitting based on all precedent elections. 
+The graph above is used to evaluate the performance of this simple regression and of all future models. The y-axis shows the R^2 in case of a regression or the score in case of a classification. The x-axis shows, what I evaluate. The 2003 data point will always be the performance of the model within the train-dataset (2003). The years 2007 to 2015 represent a cross-validation with either fitting on just the precedent election or fitting based on all precedent elections. 
 
-Let us first have a look at the blue line: Here we fit the outcome of the 2003 election to the outcome of the 1999 election and use the coefficients to make an out-of-sample prediction for the 2007 election (same mechanism for the following years). This model performs very poorly with even a negative R^2 in 2007. Due to the very poor performance, I was tempted to test a second model: I fitted the 2003 outcome on the 2003 outcome such that I had a model with an intercept of zero and and a beta coefficient of 1 (this model will be called zero/one). Testing this model in a forecast basically means to use the outcome of the last elections as the prediction for the next election. This model, even though performing a bit better, still performs very bad, so past elections do not seem to contain a lot of information about future elections (similar as financial data). 
+Let us first have a look at the blue line: Here I fit the outcome of the 2003 election to the outcome of the 1999 election and use the coefficients to make an out-of-sample prediction for the 2007 election (same mechanism for the following years). This model performs very poorly with even a negative R^2 in 2007. Due to the very poor performance, I was tempted to test a second model: I fitted the 2003 outcome on the 2003 outcome such that I had a model with an intercept of zero and and a beta coefficient of 1 (this model will be called zero/one). Testing this model in a forecast basically means to use the outcome of the last elections as the prediction for the next election. This model, even though performing a bit better, still performs very bad, so past elections do not seem to contain a lot of information about future elections (similar as financial data). 
 
 #### Regression with relative values
 To improve my model, I now start working with relative values. The idea: if I transform my data, models will likely perform much better. I can apply regressions and classifiers to relative data and then transform the data back to absolute values such that I get a better forecast of the outcome of elections. 
@@ -98,7 +98,7 @@ The last row is the output variable (voteshare_demeaned). As we would expect, vo
 As we can see, our results have not really improved compared to the full multivariate model. 
 
 #### Regression: conclusion
-Even though we have tested a lot of different models so far, it seems not to be possible to create a model that performs better than our simple zero/one model where I just use the outcome of the last election as the prediction for the next election. Given this result, I will now use the predicted values of the univariate zero/one model and add the mean back again plus a correction factor from the outcome of the election in Lucerne and test the performance of this model. The results can be found in the table below: 
+Even though I have tested a lot of different models so far, it seems not to be possible to create a model that performs better than our simple zero/one model where I just use the outcome of the last election as the prediction for the next election. Given this result, I will now use the predicted values of the univariate zero/one model and add the mean back again plus a correction factor from the outcome of the election in Lucerne and test the performance of this model. The results can be found in the table below: 
 
  -- | R^2 before |R^2 after
 ----|---------|---------
@@ -121,54 +121,56 @@ As we can see, our decision tree regression performs worse than the zero/one mod
 In our case, we have an almost linear relationship between the outcome of the last vote and the outcome of the current vote. As the plot shows, it is not suitable to use a decision tree regression in case of an almost perfect linear relationship. 
 
 
-## 5 Apply ML method to discrete output variable 
-As stated in the introduction, we will now assess the effectiveness of classifiers for a voteshare threshold. Threshold classifications for predicting the outcome of elections can be important if for example we want to predict if a party will reach a majority in a ceratin area (e.g. president elections in the U.S.) or if there is a minimum voteshare that a party must reach in order to receive seats in the parlament. In Zurich none of those two examples is especially relevant, therefore we define the threshold just as the median party strength of the left-wing parties. By defining the threshold this way, we avoid problems with an imbalanced dataset.  
+## 4 Predict discrete output variables 
+As stated in the introduction, I will now assess the effectiveness of classifiers for a voteshare threshold. Threshold classifications for predicting the outcome of elections can be important if for example we want to predict if a party will reach a majority in a ceratin area (e.g. president elections in the U.S.) or if there is a minimum voteshare that a party must reach in order to receive seats in the parlament. In Zurich none of those two examples is especially relevant, therefore I define the threshold just as the median party strength of the left-wing parties. By defining the threshold this way, I avoid problems with an imbalanced dataset.  
 
 ### Logistic regression 
-<img src="decision boundaries log reg.png" width="400" height="300">
 
-Illustration of the problem of weak explanatory variables: Feature "foreigners" has almost no impact on decision boundary. Furthermore, the error of missclassified samples seems to nonsystematic (= random). 
+The first classifier tested is the logistic regression. Let us direclty jump to the results: 
 
-<img src="accuracy logistic regression.png" width="400" height="300">
+<img src="images/accuracy logistic regression.png" width="450" height="300">
 
-Multivariate regression performs slightly better than univariate regression. Positive trend is probably random. 
+Instead of the R^2, I now use the score (percentage of correctly classified observations) to evaluate my classifiers. Similar as before, the univariate model with the outcome of the last election as the only feature performs better in classifing than a multivariate model. Second, increasing our train dataset over time does not seem to add any benefit. 
+
+I tried some more multivariate models by playing around with the number and selection of features. It turned out that a multivariate model with the two explanatory variables "foreigners" and "voteshare_past" performs better than a multivariate regression with the four most relevant factors (see feature selection above) and it also performs better than my simple univariate model: 
+
+<img src="images/accuracy logistic regression selection.png" width="450" height="300">
+
+Does this mean that I finally found a model that performs better than just using the outcome of the last election as predictor for the current election? I doubt that this is the case. My approach of playing around with the number of factors could be described as "factor mining" and I fear that the variable "foreigners" just helped to improve the model within this very specific time range of 2003 to 2015. Let us have a lock at the decision boundaries: 
+
+<img src="images/decision boundaries log reg.png" width="400" height="300">
+
+As we can see, the factor "foreigner" has almost no impact on the decision boundary, the predominant factor is by far the outcome of the last election. Therefore I doubt that the factor "foreigners" can actually improve my logistic regression classifier.  
+
 
 ### Decision Tree
-Optimal depth: 
+Given my results from the logistic regression, I will only test the decision tree for the univariate model. The goal is to assess wheather the decision tree reaches a better performance than the logistic regression. 
 
-<img src="depth decision tree.png" width="400" height="300">
+Before I can start using the the decision tree, I need to determine the optimal maximal depth of my decision tree. Due to simplicity, I use a loop with a k-fold method on the whole dataset to assess the optimal depth even though I should usually avoid to apply k-fold methods to time series data. As we can see in the plot below, the model performs best for a depth of one or two. I will therefore use a max depth of two. 
 
-A depth of 5 leaves seems to be optimal for the decision tree
+<img src="images/depth decision tree.png" width="400" height="300">
 
-Accuracy: 
+The graph below shows the accuracy of the decision tree compared to the accuarcy of the logistic regression. The decision tree performs worse than the logistic regression. I was also running multivariate regressions on the decision tree (not part of the code) but the performance was in every case worse than the logistic regression. 
 
-<img src="accuracy decision tree.png" width="400" height="300">
-
-Multivariate regression is slightly better than univariate regression. However, performance over time is decreasing and overall performance is bad. 
+<img src="images/accuracy decision tree.png" width="450" height="300">
 
 
 ### KNN
-Optimal depth: 
+Finally I want to test the performance of the KNN model. I will proceed in the same fashion as for the decision tree. The optimal number of neighbours can be derived from the plot below and is equal to three. 
+
 <img src="depth KNN.png" width="400" height="300">
 
-Difficult to determine optimal depth, needs some further testing through cross-validation. Our choice for now: 5 neighbours. 
+As we can see in the plot below, the KNN model reaches a lower performance on the training set but a higher performance on all cross validations. In this project, where the outcome of voteshare seems to be quite random (given the mean is known), it looks as if the nonparametric KNN model works better than a parametric model, that has difficulties to caputre the randomness of the outcomes. 
 
-Accuracy: 
-<img src="accuracy KNN.png" width="400" height="300">
-
-As expected is the univariate model in this case better than the multivariate one. 
-
-## 6 Conclusion 
-* Predicting elections is similar as predicting stock prices: Today's outcome of elections is the best predictor for future outcomes and once we account for the change in the mean, differences in voteshares are almost random. 
-  * Possible explanations: 
-      * Humains are involved and humains behave irrational and unpredictable 
-      * Shares of votes is largely dependent on candidates. A voter's attitude towards a candidate is very difficult to measure 
-* A multivariate model can still improve the model, even if only by a small percentage 
-  * In case of a continuous output variable, we should prefer the linear regression model over the decision tree regression
-  * In case of a discrete output variable, we should chose the logistic regression: Best accuracy and best robustness
-* Further explanatory should be tested for their predictive power
-  * Possible variables: 
-    * Sentiment analysis in social media 
-    * Some explanatory variables on candidates
+<img src="images/accuracy KNN.png" width="450" height="300">
 
 
+## 5 Conclusion 
+* Predicting elections is similar as predicting stock prices, given the efficient market hypothesis is true: Today's outcome of elections is the best predictor for future outcomes 
+   * However, we can get closer to "today's outcome of elections" if we use data from recent elections in other areas. This more recent data can help us to improve our model. 
+* Once we account for the change in the mean, differences in the strength of political parties between two elections are almost random. Possible explanations: 
+    * Humains are involved and predicting humain behaviour is tricky
+    * Shares of votes is largely dependent on candidates. A voter's attitude towards a candidate is very difficult to measure 
+* A multivariate model does not help to improve our prediction and if it does, it is presumably due to luck. 
+* In case of a continuous output variable, we should prefer the linear regression model over the decision tree regression due to the linear nature of our task. 
+* In case of a discrete output variable, we should chose the KNN classifier which seems to deal better with the randomness of our data than a parametric model. 
