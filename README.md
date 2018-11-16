@@ -18,7 +18,7 @@ The election data from the canton of Lucerne can be retrieved from the official 
 
 The election data starts in 1995 and covers six elections. However, most explanatory variables are only available for the elections 2003, 2007, 2011 and 2015, therefore I focuse my analysis on those four elections. How I handle missing values or useless data is described in the jupyter file. 
 
-The explained variable is voteshare, which consists of the combined party strength (share of votes) of the three parties "Sozialdemokratische Partei (SP)", "Grüne Partei (GP)" and "Alternative Liste (AL)". Those three parties are forming the left wing in the Kanton of Zurich. 
+The explained variable is voteshare, which consists of the combined party strength (share of votes) of the three parties "Sozialdemokratische Partei (SP)", "Grüne Partei (GP)" and "Alternative Liste (AL)". Those three parties are forming the left wing in the Kanton of Zurich (Green, red and dark red point). The left-right axis is the most important axis to define political parties in Switzerland. 
 
 <img src="images/position parteien.png" width="500" height="400">
 
