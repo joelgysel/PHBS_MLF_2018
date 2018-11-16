@@ -27,6 +27,10 @@ Feature |Description
 children_ratio	| Population between 0 and 18 years divided by population between 18 and 64
 participation	| Participation in election in %
 foreigners	| Share of foreign people compared to whole population 
+old_ratio	| Population above 65 divided by population between 18 and 64
+social_aid	| Number of unemployed people who receive social aid
+income	| Median income 
+wealth	| Median wealth (net assets) 
 population_density	| Population density within a district
 voteshare_past | Share of votes of left-wing parties in last election
 
@@ -75,6 +79,9 @@ The accuracy of my model is much better now. This means: If I can predict the ch
 <img src="r2 relative values sigma.png" width="550" height="300">
 
 We can see that this fitted model performs better than before but still worse than the zero/one model. 
+
+<img src="images/r2 selected vs multi.png" width="550" height="300">
+
 
 
 ## 5 Apply ML method to continuous output variable 
