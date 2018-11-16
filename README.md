@@ -7,14 +7,16 @@ Predict the outcome of elections in the Swiss Canton of Zurich
 Joel Gysel, 221802010272
 
 ## 1 Introduction 
-Switzerland is divided into 26 states called "Cantons". Zurich is the most populous canton of Switzerland and it consists of 166 municipalities. Every four years, elections take place in Zurich. In Switzerland there are typically two or three left-wing parties and three centrist or right-wing parties. 
+Switzerland is divided into 26 states called "Cantons". Zurich is the most populous canton of Switzerland and it consists of 166 municipalities. Every four years, elections take place in Zurich.
 
 The aim of this project is first to predict the share of votes that the three left-wing parties combined in Zurich will reach in the next election and second to define a threshold and assess the effectiveness of machine learning classifiers in predicting wheather the left-wing parties will reach a voteshare above this threshold or not. 
 
-<img src="images/zurich_sp_1995.png" width="650" height="700">
-
 ## 2 Data description
-All relevant data can be retrieved from https://opendata.swiss/de/. The election data starts in 1995 and covers six elections. However, most explanatory variables are only available for the elections 2003, 2007, 2011 and 2015, therefore I focuse my analysis on those four elections.
+All relevant data concerning Zurich can be retrieved from the official website of the statistical office of Zurich: https://statistik.zh.ch/internet/justiz_inneres/statistik/de/daten/gemeindeportraet_kanton_zuerich.html#a-content. 
+
+The election data from the canton of Lucerne can be retrieved from the official website of the statistical office of Switzerland: https://www.bfs.admin.ch/asset/de/je-d-17.02.01_03LU. 
+
+The election data starts in 1995 and covers six elections. However, most explanatory variables are only available for the elections 2003, 2007, 2011 and 2015, therefore I focuse my analysis on those four elections. How I handle missing values or useless data is described in the jupyter file. 
 
 The explained variable is voteshare, which consists of the combined party strength (share of votes) of the three parties "Sozialdemokratische Partei (SP)", "Grüne Partei (GP)" and "Alternative Liste (AL)". Those three parties are forming the left wing in the Kanton of Zurich. 
 
@@ -36,7 +38,6 @@ voteshare_past | Share of votes of left-wing parties in last election
 
 
 Not included in the data frame but still a very important variable is the variable lucerne. As we can see in the graph below, the outcome of the Zurich election follows usually the trend of elections prior to the Zurich election. The canton of Lucerne has its election just a few month before the Zurich election takes place and if the left-wing parties are losing votes in Lucerne, it is very likely that the same will happen in the Zurich elections. By including the percentage changes in voteshare from Lucerne, I aim to further improve our model. 
-
 
 <img src="images/kantonale wahlen.png" width="550" height="300">
 
