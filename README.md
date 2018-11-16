@@ -11,7 +11,7 @@ Switzerland is divided into 26 states called "Cantons". Zurich is the most popul
 
 The aim of this project is first to predict the share of votes that the three left-wing parties combined in Zurich will reach in the next election and second to define a threshold and assess the effectiveness of machine learning classifiers in predicting wheather the left-wing parties will reach a voteshare above this threshold or not. 
 
-<img src="images/zurich_sp_1995.png" width="650" height="700">
+<img src="zurich_sp_1995.png" width="650" height="700">
 
 ## 2 Data description
 All relevant data can be retrieved from https://opendata.swiss/de/. The election data starts in 1995 and covers six elections. However, most explanatory variables are only available for the elections 2003, 2007, 2011 and 2015, therefore we focuse our analysis on those four elections.
@@ -47,7 +47,7 @@ Not included in the data frame but still a very important variable is the variab
 #### Regression with absolute values
 Before we start running regressions with multiple explanatory, we want to run a very sparse model with just one explanatory variable: The outcome of the last election. This sparse model will further be called "univariate". This simple model helps to demonstrate the problem with absolute values. 
 
-<img src="images/r2 absolute values.png" width="550" height="300">
+<img src="images/r2 absolute values.png" width="450" height="300">
 
 The graph above is used to evaluate the performance of this simple regression and of all future models. The y-axis shows the R^2 in case of a regression or the score in case of a classification. The x-axis shows, what we evaluate. The 2003 data point will always be the performance of the model within the train-dataset (2003). The years 2007 to 2015 represent a cross-validation with either fitting on just the precedent election or fitting based on all precedent elections. 
 
@@ -67,16 +67,16 @@ P-value	            | 0.5585
 
 Luckily, we get a p-value of over 0.55 which means that we cannot reject the null-hypothesis of equal variance in the election years. Given this result, I am now deducting the mean within each election year. The two histogramms below show the data before and after the transformation: 
 
-<img src="images/voteshares.png" width="400" height="350">
-<img src="images/voteshares demeaned.png" width="400" height="350">
+<img src="images/voteshares.png" width="300" height="250">
+<img src="images/voteshares demeaned.png" width="300" height="250">
 
 Now I run the same regressions again as before, but this time I use relative values: 
 
-<img src="images/r2 relative values.png" width="550" height="300">
+<img src="images/r2 relative values.png" width="450" height="300">
 
 The accuracy of my model is much better now. This means: If I can predict the change in mean by making use of election data from the canton of Lucerne, it should be possible to improve my model. A second observation of the above graph is that the zero/one model is still performing better than a fitted model. Next, I will try to improve the fitted model by making the fit not just based on the last election but on all last elections, which means that my dataset for fitting is growing over time. 
 
-<img src="images/r2 relative values sigma.png" width="550" height="300">
+<img src="images/r2 relative values sigma.png" width="450" height="300">
 
 As we can see in the graph, in 2003 (train accuracy) and 2007 (first out-of-sample-prediction), this approach will lead to the same results as the fitted model before since the dataset only starts to be bigger from 2011 onward. For 2011 and 2015, this fitted model performs better than before but still worse than the zero/one model. 
 
@@ -85,15 +85,15 @@ As we can see in the graph, in 2003 (train accuracy) and 2007 (first out-of-samp
 
 Next, I will try to run a multivariate regression that includes all explanatory variables. I will provide a short example to provide the idea behind the multiple regression: If during the fit stage our model learns, that a higher share of foreign people leadst to a significantly higher voteshare for the left-wing parties, then it will predict a higher voteshare if the percentage of foreigners increased in a community from one election to the other, making the model more accurate. Let us see, how well a multiple regression performs: 
 
-<img src="images/r2 selected vs multi.png" width="500" height="300">
+<img src="images/r2 selected vs multi.png" width="450" height="300">
 
 In case of our zero/one model, there is almost no difference in the R^2 of a multivariate model compared to our univariate model before with voteshare_past as the only explanatory variable. In case of our model "last election" that uses coefficients from a fit of secondlast to last election, the multivariate model performs even worse than the univariate model. Maybe this result is due to overfit. Let us asses the heatmap of all our coefficients: 
 
-<img src="images/heatmap.png" width="400" height="400">
+<img src="images/heatmap.png" width="500" height="500">
 
 The last row is the output variable (voteshare_demeaned). As we would expect, voteshare_past_demeaned has by far the highest correlation with voteshare_demeaned. Other factors such as median wealth, percentage of foreigners and population density seem to have some explanatory power as well. We use those four factors and remove all other factors for a more sparse model. This new model with only four factors shows the following performance: 
 
-<img src="images/r2 selected vs multi.png" width="550" height="300">
+<img src="images/r2 selected vs multi.png" width="450" height="300">
 
 As we can see, our results have not really improved compared to the full multivariate model. 
 
@@ -112,7 +112,7 @@ Our new R^2 of the predicted absolute values is still well below our R^2 with re
 ### Decision tree Regression 
 A different method to predict a continuous output variable is the decision tree regression. I will shortly test this model in order to assess if it has a better performance than our best performing regression model (zero/one). 
 
-<img src="images/r2 decision tree.png" width="400" height="300">
+<img src="images/r2 decision tree.png" width="450" height="300">
 
 As we can see, our decision tree regression performs worse than the zero/one model. The answer to this worse performance is found in the next graph: 
 
