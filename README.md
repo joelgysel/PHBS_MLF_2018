@@ -135,7 +135,7 @@ Instead of the R^2, I now use the score (percentage of correctly classified obse
 
 I tried some more multivariate models by playing around with the number and selection of features. It turned out that a multivariate model with the two explanatory variables "foreigners" and "voteshare_past" performs better than a multivariate regression with the four most relevant factors (see feature selection above) and it also performs better than my simple univariate model: 
 
-<img src="images/accuracy logistic regression selection.png" width="450" height="300">
+<img src="images/accuracy logistic regression selected.png" width="450" height="300">
 
 Does this mean that I finally found a model that performs better than just using the outcome of the last election as predictor for the current election? I doubt that this is the case. My approach of playing around with the number of factors could be described as "factor mining" and I fear that the variable "foreigners" just helped to improve the model within this very specific time range of 2003 to 2015. Let us have a lock at the decision boundaries: 
 
@@ -159,7 +159,7 @@ The graph below shows the accuracy of the decision tree compared to the accuarcy
 ### KNN
 Finally I want to test the performance of the KNN model. I will proceed in the same fashion as for the decision tree. The optimal number of neighbours can be derived from the plot below and is equal to three. 
 
-<img src="depth KNN.png" width="400" height="300">
+<img src="images/depth KNN.png" width="400" height="300">
 
 As we can see in the plot below, the KNN model reaches a lower performance on the training set but a higher performance on all cross validations. In this project, where the outcome of voteshare seems to be quite random (given the mean is known), it looks as if the nonparametric KNN model works better than a parametric model, that has difficulties to caputre the randomness of the outcomes. 
 
